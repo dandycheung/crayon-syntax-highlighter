@@ -249,9 +249,9 @@
                 getInfo: function () {
                     return {
                         longname: 'Crayon Syntax Highlighter',
-                        author: 'Aram Kocharyan',
-                        authorurl: 'http://aramk.com/',
-                        infourl: 'https://github.com/aramk/crayon-syntax-highlighter',
+                        author: 'Aram Kocharyan & Fedor Urvanov',
+                        authorurl: 'http://aramk.com/, https://urvanov.ru/',
+                        infourl: 'https://github.com/<aramk|urvanov-ru>/crayon-syntax-highlighter',
                         version: "1.0"
                     };
                 }
@@ -262,9 +262,8 @@
 
     };
 
-    $(document).ready(function () {
-        // Load TinyMCE
+    // $(document).ready(function () {
         CrayonTinyMCE.loadTinyMCE();
-    });
+    // });
 
 })(jQueryCrayon);

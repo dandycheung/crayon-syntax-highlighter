@@ -21,13 +21,13 @@ msgstr ""
 # @ crayon-syntax-highlighter
 #: crayon_formatter.class.php:266
 msgid "Toggle Plain Code"
-msgstr "ハイライト表示ON/OFF"
+msgstr "プレーンテキスト表示ON/OFF"
 
 # @ crayon-syntax-highlighter
 #: crayon_formatter.class.php:268
 #, php-format
 msgid "Press %s to Copy, %s to Paste"
-msgstr "貼り付けにコピー、%sに%sを押して、"
+msgstr "貼り付けにコピー、%sに%sを押して"
 
 # @ crayon-syntax-highlighter
 #: crayon_formatter.class.php:268
@@ -332,7 +332,7 @@ msgstr "ツールバーの表示"
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:559
 msgid "Overlay the toolbar on code rather than push it down when possible"
-msgstr "コードを押し下げるのではなく、コード上に重ねて表示"
+msgstr "コードを押し下げるのではなくコード上に重ねて表示"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:560
@@ -362,7 +362,7 @@ msgstr "コード行を縞模様で表示する"
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:572
 msgid "Enable line marking for important lines"
-msgstr "重要な行にマーキングを有効にする"
+msgstr "重要な行向けにマーキングを有効にする"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:573
@@ -372,7 +372,7 @@ msgstr "デフォルトで行番号を表示"
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:574
 msgid "Enable line number toggling"
-msgstr "行番号の切り替えを有効にする"
+msgstr "※行番号の切り替えON/OFFを有効にする"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:575
@@ -382,29 +382,31 @@ msgstr "行番号の開始数字"
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:585
 msgid "When no language is provided, use the fallback"
-msgstr "ソース言語が提供されていない場合は、代替えを使用します。"
+msgstr "ソース言語が提供されていない場合は、代替えを使用する"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:591
-#, fuzzy, php-format
+#modified 2022-Jan-03
 msgid "%d language has been detected."
-msgstr "%dのソース言語が検出されてます。"
+msgid_plural "%d languages have been detected."
+msgstr[0] "%d 言語を検出。"
+msgstr[1] "%d 言語を検出。"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:592
 msgid "Parsing was successful"
-msgstr "解析が成功しました。"
+msgstr "解析が成功しました"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:592
 msgid "Parsing was unsuccessful"
-msgstr "解析に失敗しました。"
+msgstr "解析に失敗しました"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:598
 #, php-format
 msgid "The selected language with id %s could not be loaded"
-msgstr "ID %s の選択したソース言語をロードできませんでした。"
+msgstr "ID %s の選択したソース言語をロードできませんでした"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:602
@@ -426,7 +428,7 @@ msgstr "テーマエディタ"
 #: crayon_settings_wp.class.php:626
 #, php-format
 msgid "Change the %1$sfallback language%2$s to change the sample code. Lines 5-7 are marked."
-msgstr "サンプルコードを変更するには、%1$sfallback language(代替え言語)%2$sを変更て下さい。5行目から7行目はマークされます。"
+msgstr "サンプルコードを変更するには、%1$sfallback language(代替え言語)%2$sを変更て下さい。5行目から7行目はマークされてます。"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:630
@@ -436,7 +438,7 @@ msgstr "リアルタイムのプレビューを有効にする"
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:632
 msgid "Enqueue themes in the header (more efficient)."
-msgstr "ヘッダー内のエンキューテーマ（より効率的）"
+msgstr "テーマをヘッダー内で読み込みキューに追加する（より効率的）"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:632
@@ -458,7 +460,7 @@ msgstr "?"
 #: crayon_settings_wp.class.php:635
 #, php-format
 msgid "The selected theme with id %s could not be loaded"
-msgstr "ID %sの選択したテーマをロードできませんでした。"
+msgstr "ID %sの選択したテーマをロードできませんでした"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:647
@@ -469,37 +471,37 @@ msgstr "フォントサイズ指定"
 #: crayon_settings_wp.class.php:652
 #, php-format
 msgid "The selected font with id %s could not be loaded"
-msgstr "ID %s の選択されたフォントをロードできませんでした。"
+msgstr "ID %s の選択されたフォントをロードできませんでした"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:658
 msgid "Enqueue fonts in the header (more efficient)."
-msgstr "ヘッダー内のエンキューフォント（より効率的）"
+msgstr "フォントをヘッダー内で読み込みキューに追加する（より効率的）"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:663
 msgid "Enable plain code view and display"
-msgstr "単純なコードビューを有効にする"
+msgstr "プレーンテキストビューを有効にする"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:666
 msgid "Enable plain code toggling"
-msgstr "単純なコードの切り替えを有効にする"
+msgstr "※プレーンテキストの切り替えON/OFFを有効にする"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:667
 msgid "Show the plain code by default"
-msgstr "デフォルトでプレインコードを表示する"
+msgstr "デフォルトでプレーンテキストを表示する"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:668
 msgid "Enable code copy/paste"
-msgstr "コードのコピー/貼り付けを有効にする"
+msgstr "※コードのコピー/貼り付けを有効にする"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:670
 msgid "Enable opening code in a window"
-msgstr "新しいウインドウでコードを開くを有効にする"
+msgstr "※新しいウインドウでコードを開くを有効にする"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:671
@@ -509,7 +511,7 @@ msgstr "常にスクロールバーを表示する"
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:672
 msgid "Tab size in spaces"
-msgstr "tab挿入の空白代替え数（単純コードビュー）"
+msgstr "タブ挿入の空白代替え数"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:677
@@ -524,7 +526,7 @@ msgstr "属性内のHTMLエンティティを出力"
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:681
 msgid "Remove whitespace surrounding the shortcode content"
-msgstr "ショートコードの内容を囲む空白の部分を削除します"
+msgstr "ショートコードの内容を囲む空白の部分を削除する"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:683
@@ -534,42 +536,42 @@ msgstr "区切り文字とタグが混合言語の強調表示を許可する。
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:685
 msgid "Show Mixed Language Icon (+)"
-msgstr "混合言語のアイコンを（+）を表示"
+msgstr "混合言語のアイコン（+）を表示する"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:690
 msgid "Capture Mini Tags like [php][/php] as Crayons."
-msgstr "Crayonsとして[php][/php]のようなミニタグをキャプチャします。"
+msgstr "Crayonsとして[php][/php]のようなミニタグをキャプチャする。"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:691
 msgid "Capture Inline Tags like {php}{/php} inside sentences."
-msgstr "{php}{/php}文の内部でインラインタグをキャプチャします。"
+msgstr "{php}{/php}文の内部でインラインタグをキャプチャする。"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:692
 msgid "Wrap Inline Tags"
-msgstr "ラップインラインタグ"
+msgstr "インラインタグを折り返す"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:693
 msgid "Capture `backquotes` as &lt;code&gt;"
-msgstr "の&lt;code&gt;として `バッククォート`をキャプチャする"
+msgstr "バッククォートを&lt;code&gt;としてキャプチャする"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:694
 msgid "Capture &lt;pre&gt; tags as Crayons"
-msgstr "Crayonsとして&lt;pre&gt;タグをキャプチャ"
+msgstr "Crayonsとして&lt;pre&gt;タグをキャプチャする"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:695
 msgid "Enable [plain][/plain] tag."
-msgstr "[plain][/plain]タグを有効にします。"
+msgstr "[plain][/plain]タグを有効にする。"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:700
 msgid "When loading local files and a relative path is given for the URL, use the absolute path"
-msgstr "ローカルファイルのロード時と相対パスがURLに指定されている場合、絶対パスを使用します。"
+msgstr "ローカルファイルのロード時と相対パスがURLに指定されている場合、絶対パスを使用する"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:703
@@ -580,7 +582,7 @@ msgstr "相対URLが続きます。"
 #: crayon_settings_wp.class.php:707
 #, php-format
 msgid "Use %s to separate setting names from values in the &lt;pre&gt; class attribute"
-msgstr " &lt;pre&gt; のクラス属性の値から設定名を区切るには %s を使う。"
+msgstr "&lt;pre&gt; のクラス属性の値から設定名を区切るには %s を使う"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:713
@@ -600,7 +602,7 @@ msgstr "必要な時だけCrayonのCSSとJavaScriptを読み込むように試�
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:717
 msgid "Disable enqueuing for page templates that may contain The Loop."
-msgstr "ループを含む可能性のあるページテンプレートのエンキューを無効にします。"
+msgstr "ループを含む可能性のあるページテンプレートのエンキューを無効にする。"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:718
@@ -609,12 +611,12 @@ msgstr "コメント内のクレヨンを許可する"
 
 #: crayon_settings_wp.class.php:719
 msgid "Remove Crayons from excerpts"
-msgstr "Crayon抜粋から削除"
+msgstr "抜粋からクレヨンを削除する"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:720
 msgid "Load Crayons only from the main Wordpress query"
-msgstr "唯一の主要なWordpressのクエリからロードクレヨン"
+msgstr "メインのワードプレスクエリからのみクレヨンをロードする"
 
 # @ crayon-syntax-highlighter
 #: crayon_settings_wp.class.php:721
@@ -759,7 +761,7 @@ msgstr "プログラム言語"
 # @ crayon-syntax-highlighter
 #: util/tag-editor/crayon_te_content.php:78
 msgid "Marked Lines"
-msgstr "マークするライン"
+msgstr "マークする行"
 
 # @ crayon-syntax-highlighter
 #: util/tag-editor/crayon_te_content.php:79
@@ -805,21 +807,172 @@ msgstr "相対的なローカルパスが指定されている場合は、 %s �
 # @ crayon-syntax-highlighter
 #: util/tag-editor/crayon_te_content.php:117
 msgid "Change the following settings to override their global values."
-msgstr "全ての設定値を上書きするには、設定メニューから変更します。"
+msgstr "以下で設定を上書き変更できます。"
 
 # @ crayon-syntax-highlighter
 #: util/tag-editor/crayon_te_content.php:119
 msgid "Only changes (shown yellow) are applied."
-msgstr "ここでの変更は、このコードのみの変更(黄色表示)として適用されます。"
-
-# @ crayon-syntax-highlighter
-#: util/tag-editor/crayon_te_content.php:121
-#, php-format
-msgid "Future changes to the global settings under %sCrayon &gt; Settings%s won't affect overridden settings."
-msgstr "%sCrayon &gt; 設定%s で変更される将来の変更は、ここで上書きされた変更には影響されません。"
+msgstr "このコードのみの変更(黄色表示)として適用されます。"
 
 # @ crayon-syntax-highlighter
 #: util/theme-editor/editor.php:16
 msgid "Back To Settings"
 msgstr "設定を戻す"
 
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:199
+msgid "Don't Highlight"
+msgstr "ハイライトしない"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:265
+msgid "Future changes to the global settings under %sCrayon &gt; Settings%s won't affect overridden settings."
+msgstr "%sCrayon &gt; 設定%s で設定変更してもここで上書きする変更には影響しません。"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1002
+msgid "Edit"
+msgstr "編集"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1002
+msgid "Duplicate"
+msgstr "複製"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1002
+msgid "Submit"
+msgstr "送信"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1002
+msgid "Delete"
+msgstr "削除"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1007
+msgid "Duplicate a Stock Theme into a User Theme to allow editing."
+msgstr "編集するには付属テーマを複製します。"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1107
+msgid "Using this markup for Mini Tags and Inline tags is now %sdeprecated%s! Use the %sTag Editor%s instead and convert legacy tags."
+msgstr "ミニタグやインラインタグをこのマークアップに使用するのは現在%s非推奨%s！代わりに%sタグエディタ%sを使ってレガシータグに変えるのが良い。"
+
+# @ crayon-syntax-highlighter
+#: util\theme-editor\theme_editor.php:224
+msgid "User-Defined Theme"
+msgstr "ユーザーテーマ"
+
+# @ crayon-syntax-highlighter
+#: util\theme-editor\theme_editor.php:225
+msgid "Stock Theme"
+msgstr "付属テーマ"
+
+# @ crayon-syntax-highlighter
+#: crayon_formatter.class.php:298
+msgid "Toggle Line Wrap"
+msgstr "行の折り返しON/OFF"
+
+# @ crayon-syntax-highlighter
+#: crayon_formatter.class.php:302
+msgid "Expand Code"
+msgstr "横に広げるON/OFF"
+
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:791
+msgid "Enable line ranges for showing only parts of code"
+msgstr "表示する行指定を有効にする"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:794
+msgid "Wrap lines by default"
+msgstr "デフォルトで行を折り返す"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:795
+#modified 2022-Jan-03
+msgid "Enable line wrap toggling"
+msgstr "※行の折り返しON/OFFを有効にする"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1018
+msgid "Change the %1$sfallback language%2$s to change the sample code or %3$schange it manually%4$s. Lines 5-7 are marked."
+msgstr "サンプルコードの言語を変えるには%1$sフォールバック言語（代替え言語）%2$sを変更するか%3$s手動で変更%4$s。5行目から7行目はマークされています。"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1047
+msgid "Line Height"
+msgstr "行の高さ指定"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1072
+msgid "Minimize code"
+msgstr "クリックするまでコードを折り畳む"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1073
+msgid "Expand code beyond page borders on mouseover"
+msgstr "マウスオーバーで横に広げる"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1074
+msgid "Enable code expanding toggling when possible"
+msgstr "※横に広げるON/OFFを有効にする"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1083
+msgid "Remove &lt;code&gt; tags surrounding the shortcode content"
+msgstr "ショートコードでは&lt;code&gt;タグを削除する"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1088
+#modified 2022-Jan-03
+msgid "Convert tabs to spaces"
+msgstr "タブをスペースに変える"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1091
+msgid "Blank lines before code:"
+msgstr "コードの前の空行数："
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1093
+msgid "Blank lines after code:"
+msgstr "コードの後の空行数："
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1098
+msgid "Capture Inline Tags"
+msgstr "インラインタグをキャプチャする"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1100
+msgid "Capture &lt;code&gt; as"
+msgstr "&lt;code&gt;を何としてキャプチャするか"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1137
+msgid "Display the Tag Editor in any TinyMCE instances on the frontend (e.g. bbPress)"
+msgstr "タグエディタをフロントエンド上の任意のTinyMCEインスタンスで表示する（例：bbPress）"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1138
+msgid "Display Tag Editor settings on the frontend"
+msgstr "フロントエンドでタグエディタを表示"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1159
+msgid "Disable for posts before"
+msgstr "これ以前の投稿を無効にする"
+
+# @ crayon-syntax-highlighter
+#: crayon_settings_wp.class.php:1162
+msgid "Load scripts in the page footer using wp_footer() to improve loading performance."
+msgstr "読込み速度向上のために wp_footer() を使用してページフッター内で読み込む。"
+
+# @ crayon-syntax-highlighter
+#: util\tag-editor\crayon_tag_editor_wp.class.php:207
+msgid "Line Range"
+msgstr "表示する行"

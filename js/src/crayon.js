@@ -506,15 +506,13 @@
             }
 
             var plain = crayons[uid].plain;
+            
+            var plainTextCode = plain[0].value;
 
-            base.togglePlain(uid, true, true);
-            toggleToolbar(uid, true);
-
-            var key = crayons[uid].mac ? '\u2318' : 'CTRL';
-            var text = strings.copy;
-            text = text.replace(/%s/, key + '+C');
-            text = text.replace(/%s/, key + '+V');
-            crayonInfo(uid, text);
+            navigator.clipboard.writeText(plainTextCode)
+                .then(function(value) { 
+                    return crayonInfo(uid, strings.copy);
+                    });
             return false;
         };
 

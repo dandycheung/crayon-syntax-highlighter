@@ -81,7 +81,9 @@ class CrayonLangs extends CrayonUserResourceCollection {
 	 * Returns a CrayonLang object. */
 	public function detect($path, $fallback_id = NULL) {
 		$this->load();
-		extract(pathinfo($path));
+		if ( '' != $path) {
+			extract(pathinfo($path));
+		}
 
 		// If fallback id if given
 		if ($fallback_id == NULL) {

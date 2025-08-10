@@ -89,6 +89,7 @@
                 $('.crayon-help').hide();
                 CrayonUtil.getAJAX({
                     action: 'crayon-ajax',
+                    _ajax_nonce: $("#crayon-main-wrap").data( "hide-help-nonce" ),
                     'hide-help': 1
                 });
             });
@@ -112,7 +113,8 @@
 
             $('#show-posts').click(function () {
                 CrayonUtil.getAJAX({
-                    action: 'crayon-show-posts'
+                    action: 'crayon-show-posts',
+                    _ajax_nonce: $("#crayon-main-wrap").data( "show-posts-nonce" )
                 }, function (data) {
                     $('#crayon-subsection-posts-info').html(data);
                 });
@@ -120,7 +122,8 @@
 
             $('#show-langs').click(function () {
                 CrayonUtil.getAJAX({
-                    action: 'crayon-show-langs'
+                    action: 'crayon-show-langs',
+                    _ajax_nonce: $("#crayon-main-wrap").data( "show-langs-nonce" )
                 }, function (data) {
                     $('#lang-info').hide();
                     $('#crayon-subsection-langs-info').html(data);
@@ -128,8 +131,9 @@
             });
 
             // Convert
-            $('#crayon-settings-form input').live(
+            $('#crayon-settings-form').on(
                 'focusin focusout mouseup',
+                 'input',
                 function () {
                     $('#crayon-settings-form').data('lastSelected', $(this));
                 });
@@ -238,6 +242,7 @@
             var obj;
             var getVars = $.extend({
                 action: 'crayon-show-preview',
+                _ajax_nonce: $("#crayon-main-wrap").data( "show-preview-nonce" ),
                 theme: adminSettings.currTheme
             }, vars);
             if (change_code) {
@@ -489,6 +494,7 @@
             CrayonUtil.getAJAX({
                 action: 'crayon-theme-editor',
                 currTheme: adminSettings.currTheme,
+                _ajax_nonce: $("#crayon-theme-editor-wrap").data( "get-nonce" ),
                 editing: editing
             }, function (data) {
                 theme_editor_wrap.html(data);

@@ -86,7 +86,6 @@ class CrayonResourceCollection {
 		}
 		try {
 			// Look in directory for resources
-
 			if (!is_dir($dir)) {
 				CrayonLog::syslog('The resource directory is missing, should be at \'' . $dir . '\'.');
 			} else if (($handle = @opendir($dir)) != FALSE) {
@@ -420,8 +419,12 @@ class CrayonResource {
 	}
 
 	function clean_id($id) {
-        $id = CrayonUtil::space_to_hyphen( strtolower(trim($id)) );
-        return preg_replace('#[^\w-]#msi', '', $id);
+		return CrayonResource::clean_id_static($id);
+	}
+	
+	public static function clean_id_static($id) {
+		$id = CrayonUtil::space_to_hyphen( strtolower(trim($id)) );
+		return preg_replace('#[^\w-]#msi', '', $id);
 	}
 
 	public static function clean_name($id) {

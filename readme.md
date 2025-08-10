@@ -1,5 +1,7 @@
 # Crayon Syntax Highlighter
 
+Reincarnation of the original Crayon Syntax Highlighter.
+
 Supports multiple languages, themes, fonts, highlighting from a URL, local file or post text.
 
 ![snapshot](https://raw.githubusercontent.com/aramk/crayon-syntax-highlighter/master/screenshots/screenshot-2.png)
@@ -7,7 +9,7 @@ Supports multiple languages, themes, fonts, highlighting from a URL, local file 
 Written in PHP and jQuery. Crayon is a Wordpress plugin, but can be used in any PHP environment.
 
 ## Download
-* [Beta Development Releases](https://github.com/aramk/crayon-syntax-highlighter/zipball/master)
+* [Beta Development Releases](https://github.com/aramk/crayon-syntax-highlighter)
 * [Stable Releases](https://wordpress.org/plugins/crayon-syntax-highlighter/)
 
 ## Tag Editor

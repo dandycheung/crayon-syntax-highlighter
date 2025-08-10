@@ -88,6 +88,7 @@ class CrayonSettings {
     const SHOW_ALTERNATE = 'show_alternate';
     const PLAIN_TAG = 'plain_tag';
     const SHOW_PLAIN_DEFAULT = 'show-plain-default';
+    const HIGHLIGHT = 'highlight';
     const ENQUEUE_THEMES = 'enqueque-themes';
     const ENQUEUE_FONTS = 'enqueque-fonts';
     const MAIN_QUERY = 'main-query';
@@ -153,11 +154,13 @@ class CrayonSettings {
     private function init() {
         global $CRAYON_VERSION;
 
-        crayon_load_plugin_textdomain();
+        // crayon_load_plugin_textdomain();
+        // 2026-06-06 moved load_textdomain to init, so that it loads after init as it is required in WP 6.7
+        add_action('init', 'crayon_load_plugin_textdomain');
 
-        self::$cache_array = array(crayon__('Hourly') => 3600, crayon__('Daily') => 86400,
-            crayon__('Weekly') => 604800, crayon__('Monthly') => 18144000,
-            crayon__('Immediately') => 1);
+        self::$cache_array = array('Hourly' => 3600, 'Daily' => 86400,
+            'Weekly' => 604800, 'Monthly' => 18144000,
+            'Immediately' => 1);
 
         $settings = array(
             new CrayonSetting(self::VERSION, $CRAYON_VERSION, NULL, TRUE),
@@ -168,13 +171,9 @@ class CrayonSettings {
             new CrayonSetting(self::LINE_HEIGHT, 15),
             new CrayonSetting(self::PREVIEW, TRUE),
             new CrayonSetting(self::HEIGHT_SET, FALSE),
-            new CrayonSetting(self::HEIGHT_MODE, array(crayon__('Max'), crayon__('Min'), crayon__('Static'))),
             new CrayonSetting(self::HEIGHT, '500'),
-            new CrayonSetting(self::HEIGHT_UNIT, array(crayon__('Pixels'), crayon__('Percent'))),
             new CrayonSetting(self::WIDTH_SET, FALSE),
-            new CrayonSetting(self::WIDTH_MODE, array(crayon__('Max'), crayon__('Min'), crayon__('Static'))),
             new CrayonSetting(self::WIDTH, '500'),
-            new CrayonSetting(self::WIDTH_UNIT, array(crayon__('Pixels'), crayon__('Percent'))),
             new CrayonSetting(self::TOP_SET, TRUE),
             new CrayonSetting(self::TOP_MARGIN, 12),
             new CrayonSetting(self::BOTTOM_SET, TRUE),
@@ -183,15 +182,12 @@ class CrayonSettings {
             new CrayonSetting(self::LEFT_MARGIN, 12),
             new CrayonSetting(self::RIGHT_SET, FALSE),
             new CrayonSetting(self::RIGHT_MARGIN, 12),
-            new CrayonSetting(self::H_ALIGN, array(crayon__('None'), crayon__('Left'), crayon__('Center'), crayon__('Right'))),
             new CrayonSetting(self::FLOAT_ENABLE, FALSE),
-            new CrayonSetting(self::TOOLBAR, array(crayon__('On MouseOver'), crayon__('Always'), crayon__('Never'))),
             new CrayonSetting(self::TOOLBAR_OVERLAY, TRUE),
             new CrayonSetting(self::TOOLBAR_HIDE, TRUE),
             new CrayonSetting(self::TOOLBAR_DELAY, TRUE),
             new CrayonSetting(self::COPY, TRUE),
             new CrayonSetting(self::POPUP, TRUE),
-            new CrayonSetting(self::SHOW_LANG, array(crayon__('When Found'), crayon__('Always'), crayon__('Never'))),
             new CrayonSetting(self::SHOW_TITLE, TRUE),
             new CrayonSetting(self::STRIPED, TRUE),
             new CrayonSetting(self::MARKING, TRUE),
@@ -210,8 +206,7 @@ class CrayonSettings {
             new CrayonSetting(self::PLAIN, TRUE),
             new CrayonSetting(self::PLAIN_TOGGLE, TRUE),
             new CrayonSetting(self::SHOW_PLAIN_DEFAULT, FALSE),
-            new CrayonSetting(self::SHOW_PLAIN,
-                array(crayon__('On Double Click'), crayon__('On Single Click'), crayon__('On MouseOver'), crayon__('Disable Mouse Events'))),
+            new CrayonSetting(self::HIGHLIGHT, TRUE),
             new CrayonSetting(self::DISABLE_ANIM, FALSE),
             new CrayonSetting(self::TOUCHSCREEN, TRUE),
             new CrayonSetting(self::DISABLE_RUNTIME, FALSE),
@@ -219,9 +214,7 @@ class CrayonSettings {
             new CrayonSetting(self::ERROR_LOG, TRUE),
             new CrayonSetting(self::ERROR_LOG_SYS, TRUE),
             new CrayonSetting(self::ERROR_MSG_SHOW, TRUE),
-            new CrayonSetting(self::ERROR_MSG, crayon__('An error has occurred. Please try again later.')),
             new CrayonSetting(self::HIDE_HELP, FALSE),
-            new CrayonSetting(self::CACHE, array_keys(self::$cache_array), 1),
             new CrayonSetting(self::EFFICIENT_ENQUEUE, FALSE),
             new CrayonSetting(self::CAPTURE_PRE, TRUE),
             new CrayonSetting(self::CAPTURE_MINI_TAG, FALSE),
@@ -235,7 +228,6 @@ class CrayonSettings {
             new CrayonSetting(self::INLINE_TAG, TRUE),
             new CrayonSetting(self::INLINE_TAG_CAPTURE, FALSE),
             new CrayonSetting(self::CODE_TAG_CAPTURE, FALSE),
-            new CrayonSetting(self::CODE_TAG_CAPTURE_TYPE, array(crayon__('Inline Tag'), crayon__('Block Tag'))),
             new CrayonSetting(self::INLINE_MARGIN, 5),
             new CrayonSetting(self::INLINE_WRAP, TRUE),
             new CrayonSetting(self::BACKQUOTE, TRUE),
@@ -248,15 +240,31 @@ class CrayonSettings {
             new CrayonSetting(self::RANGES, TRUE),
             new CrayonSetting(self::TAG_EDITOR_FRONT, FALSE),
             new CrayonSetting(self::TAG_EDITOR_SETTINGS, TRUE),
-            new CrayonSetting(self::TAG_EDITOR_ADD_BUTTON_TEXT, crayon__('Add Code')),
-            new CrayonSetting(self::TAG_EDITOR_EDIT_BUTTON_TEXT, crayon__('Edit Code')),
             new CrayonSetting(self::TAG_EDITOR_QUICKTAG_BUTTON_TEXT, 'crayon'),
             new CrayonSetting(self::WRAP_TOGGLE, TRUE),
             new CrayonSetting(self::WRAP, FALSE),
             new CrayonSetting(self::EXPAND, FALSE),
             new CrayonSetting(self::EXPAND_TOGGLE, TRUE),
             new CrayonSetting(self::MINIMIZE, FALSE),
-            new CrayonSetting(self::DELAY_LOAD_JS, FALSE)
+            new CrayonSetting(self::DELAY_LOAD_JS, FALSE),
+            new CrayonSetting(self::FALLBACK_LANG, CrayonLangs::DEFAULT_LANG),
+            
+            // Translatable strings...
+            new CrayonSetting(self::HEIGHT_MODE, array('Max', 'Min', 'Static')),
+            new CrayonSetting(self::HEIGHT_UNIT, array('Pixels', 'Percent')),
+            new CrayonSetting(self::WIDTH_MODE, array('Max', 'Min', 'Static')),
+            new CrayonSetting(self::WIDTH_UNIT, array('Pixels', 'Percent')),
+            new CrayonSetting(self::H_ALIGN, array('None', 'Left', 'Center', 'Right')),
+            new CrayonSetting(self::TOOLBAR, array('On MouseOver', 'Always', 'Never')),
+            new CrayonSetting(self::SHOW_LANG, array('When Found', 'Always', 'Never')),
+            new CrayonSetting(self::SHOW_PLAIN,
+                array('On Double Click', 'On Single Click', 'On MouseOver', 'Disable Mouse Events')),
+            new CrayonSetting(self::ERROR_MSG, 'An error has occurred. Please try again later.'),
+            new CrayonSetting(self::CODE_TAG_CAPTURE_TYPE, array('Inline Tag', 'Block Tag')),
+            new CrayonSetting(self::TAG_EDITOR_ADD_BUTTON_TEXT, 'Add Code'),
+            new CrayonSetting(self::TAG_EDITOR_EDIT_BUTTON_TEXT, 'Edit Code'),
+            
+            new CrayonSetting(self::CACHE, array_keys(self::$cache_array), 1)
         );
 
         $this->set($settings);
@@ -394,7 +402,7 @@ class CrayonSettings {
 
     /**
      * Validates settings coming from an HTML form and also for internal use.
-     * This is used when saving form an HTML form to the db, and also when reading from the db
+     * This is used when saving from an HTML form to the db, and also when reading from the db
      * back into the global settings.
      * @param string $name
      * @param alternate $value

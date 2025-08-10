@@ -120,6 +120,37 @@ class CrayonHTMLTitle extends CrayonHTMLSeparator {
 
 }
 
+class CrayonThemeEditorArgs {
+	public $id;
+	public $oldId;
+	public $name;
+	public $css;
+	public $change_settings;
+	public $allow_edit;
+	public $allow_edit_stock_theme;
+	public $delete;
+	
+	public function initialize_from_post() {
+		CrayonSettingsWP::load_settings();
+		$this->oldId = stripslashes(sanitize_text_field($_POST['id']));
+		$this->id = $this->oldId;
+		$this->name = stripslashes(sanitize_text_field($_POST['name']));
+		$this->css = stripslashes(sanitize_textarea_field($_POST['css']));
+		if (array_key_exists('change_settings', $_POST) ) {
+			$this->change_settings = CrayonUtil::set_default(sanitize_text_field($_POST['change_settings']), TRUE);
+		}
+		if (array_key_exists('allow_edit', $_POST)) {
+			$this->allow_edit = CrayonUtil::set_default(sanitize_text_field($_POST['allow_edit']), TRUE);
+		}
+		if (array_key_exists('allow_edit_stock_theme', $_POST)) {
+			$this->allow_edit_stock_theme = CrayonUtil::set_default(sanitize_text_field($_POST['allow_edit_stock_theme']), CRAYON_DEBUG);
+		}
+		if (array_key_exists('delete', $_POST)) {
+			$this->delete = CrayonUtil::set_default(sanitize_text_field($_POST['delete']), TRUE);
+		}
+	}
+}
+
 class CrayonThemeEditorWP {
 
     public static $attributes = NULL;
@@ -222,7 +253,7 @@ class CrayonThemeEditorWP {
         wp_enqueue_script('cssjson_js', plugins_url(CRAYON_CSSJSON_JS, $path), $CRAYON_VERSION);
         wp_enqueue_script('jquery_colorpicker_js', plugins_url(CRAYON_JS_JQUERY_COLORPICKER, $path), array('jquery', 'jquery-ui-core', 'jquery-ui-widget', 'jquery-ui-tabs', 'jquery-ui-draggable', 'jquery-ui-dialog', 'jquery-ui-position', 'jquery-ui-mouse', 'jquery-ui-slider', 'jquery-ui-droppable', 'jquery-ui-selectable', 'jquery-ui-resizable'), $CRAYON_VERSION);
         wp_enqueue_script('jquery_tinycolor_js', plugins_url(CRAYON_JS_TINYCOLOR, $path), array(), $CRAYON_VERSION);
-
+        CrayonLog::debug(self::$settings, 'Theme editor settings');
         if (CRAYON_MINIFY) {
             wp_enqueue_script('crayon_theme_editor', plugins_url(CRAYON_THEME_EDITOR_JS, $path), array('jquery', 'crayon_js', 'crayon_admin_js', 'cssjson_js', 'jquery_colorpicker_js', 'jquery_tinycolor_js'), $CRAYON_VERSION);
         } else {
@@ -273,6 +304,7 @@ class CrayonThemeEditorWP {
     }
 
     public static function content() {
+        check_ajax_referer( 'crayon-theme-editor-get');
         self::initSettings();
         $theme = CrayonResources::themes()->get_default();
         $editing = false;
@@ -638,34 +670,45 @@ class CrayonThemeEditorWP {
         echo self::form($atts);
     }
 
+    public static function save() {
+        check_ajax_referer( 'crayon-theme-editor-save');
+        $save_args = new CrayonThemeEditorArgs;
+        $save_args->initialize_from_post();
+        self::saveFromArgs($save_args);
+    }
+    
     /**
      * Saves the given theme id and css, making any necessary path and id changes to ensure the new theme is valid.
      * Echos 0 on failure, 1 on success and 2 on success and if paths have changed.
      */
-    public static function save() {
-        CrayonSettingsWP::load_settings();
-        $oldID = stripslashes($_POST['id']);
-        $name = stripslashes($_POST['name']);
-        $css = stripslashes($_POST['css']);
-        $change_settings = CrayonUtil::set_default($_POST['change_settings'], TRUE);
-        $allow_edit = CrayonUtil::set_default($_POST['allow_edit'], TRUE);
-        $allow_edit_stock_theme = CrayonUtil::set_default($_POST['allow_edit_stock_theme'], CRAYON_DEBUG);
-        $delete = CrayonUtil::set_default($_POST['delete'], TRUE);
-        $oldTheme = CrayonResources::themes()->get($oldID);
-
-        if (!empty($oldID) && !empty($css) && !empty($name)) {
+    public static function saveFromArgs($save_args) {
+    	CrayonSettingsWP::load_settings();
+//     	$save_args->id = stripslashes(sanitize_text_field($_POST['id']));
+//     	$save_args->name = stripslashes(sanitize_text_field($_POST['name']));
+//     	$save_args->css = stripslashes(sanitize_text_field($_POST['css']));
+//     	$save_args->change_settings = CrayonUtil::set_default(sanitize_text_field($_POST['change_settings']), TRUE);
+//     	$save_args->allow_edit = CrayonUtil::set_default(sanitize_text_field($_POST['allow_edit']), TRUE);
+//     	$save_args->allow_edit_stock_theme = CrayonUtil::set_default(sanitize_text_field($_POST['allow_edit_stock_theme']), CRAYON_DEBUG);
+//     	$save_args->delete = CrayonUtil::set_default(sanitize_text_field($_POST['delete']), TRUE);
+    	$oldTheme = CrayonResources::themes()->get($save_args->id);
+    	CrayonLog::log($save_args->oldId, 'save_args->oldId');
+    	CrayonLog::log($save_args->name, 'save_args->name');
+        if (!empty($save_args->oldId) && !empty($save_args->css) && !empty($save_args->name)) {
             // By default, expect a user theme to be saved - prevents editing stock themes
             // If in DEBUG mode, then allow editing stock themes.
-            $user = $oldTheme !== NULL && $allow_edit_stock_theme ? $oldTheme->user() : TRUE;
-            $oldPath = CrayonResources::themes()->path($oldID);
-            $oldDir = CrayonResources::themes()->dirpath_for_id($oldID);
+            $user = $oldTheme !== NULL && $save_args->allow_edit_stock_theme ? $oldTheme->user() : TRUE;
+            $oldPath = CrayonResources::themes()->path($save_args->oldId);
+            $oldDir = CrayonResources::themes()->dirpath_for_id($save_args->oldId);
             // Create an instance to use functions, since late static binding is only available in 5.3 (PHP kinda sucks)
             $theme = CrayonResources::themes()->resource_instance('');
-            $newID = $theme->clean_id($name);
-            $name = CrayonResource::clean_name($newID);
+            $newID = $theme->clean_id($save_args->name);
+            $save_args->name = CrayonResource::clean_name($newID);
             $newPath = CrayonResources::themes()->path($newID, $user);
+            CrayonLog::log($oldPath, 'oldPath');
+            CrayonLog::log($newPath, 'newPath');
             $newDir = CrayonResources::themes()->dirpath_for_id($newID, $user);
-
+            CrayonLog::log($newDir, 'newDir');
+            
             $exists = CrayonResources::themes()->is_loaded($newID) || (is_file($newPath) && is_file($oldPath));
             if ($exists && $oldPath != $newPath) {
                 // Never allow overwriting a theme with a different id!
@@ -673,7 +716,7 @@ class CrayonThemeEditorWP {
                 exit();
             }
 
-            if ($oldPath == $newPath && $allow_edit === FALSE) {
+            if ($oldPath == $newPath && $save_args->allow_edit === FALSE) {
                 // Don't allow editing
                 echo -4;
                 exit();
@@ -694,24 +737,29 @@ class CrayonThemeEditorWP {
             }
 
             $refresh = FALSE;
-            $replaceID = $oldID;
+            $replaceID = $save_args->oldId;
+            CrayonLog::log($replaceID, '$replaceID');
             // Replace ids in the CSS
-            if (!is_file($oldPath) || strpos($css, CrayonThemes::CSS_PREFIX . $oldID) === FALSE) {
+            if (!is_file($oldPath) || strpos($save_args->css, CrayonThemes::CSS_PREFIX . $save_args->id) === FALSE) {
                 // The old path/id is no longer valid - something has gone wrong - we should refresh afterwards
                 $refresh = TRUE;
             }
             // XXX This is case sensitive to avoid modifying text, but it means that CSS must be in lowercase
-            $css = preg_replace('#(?<=' . CrayonThemes::CSS_PREFIX . ')' . $replaceID . '\b#ms', $newID, $css);
+            CrayonLog::debug("before caseSensitivePregReplace replaceId=$replaceID newID=$newID css=".str_replace(array("\r\n","\r", "\n"),"q",$save_args->css), "caseSensitivePregReplace");
+            $save_args->css = preg_replace('#(?<=' . CrayonThemes::CSS_PREFIX . ')' . $replaceID . '\b#ms', $newID, $save_args->css);
+            CrayonLog::debug("after caseSensitivePregReplace replaceId=$replaceID newID=$newID css=".str_replace(array("\r\n","\r", "\n"),"q",$save_args->css), "caseSensitivePregReplace");
 
             // Replace the name with the new one
-            $info = self::getCSSInfo($css);
-            $info['name'] = $name;
-            $css = self::setCSSInfo($css, $info);
+            $info = self::getCSSInfo($save_args->css);
+            $info['name'] = $save_args->name;
+            CrayonLog::syslog($save_args->name, 'change name to ');
+            CrayonLog::log($save_args->name, 'change name to ');
+            $save_args->css = self::setCSSInfo($save_args->css, $info);
 
-            $result = @file_put_contents($newPath, $css);
+            $result = @file_put_contents($newPath, $save_args->css);
             $success = $result !== FALSE;
             if ($success && $oldPath !== $newPath) {
-                if ($oldID !== CrayonThemes::DEFAULT_THEME && $delete) {
+                if ($save_args->id !== CrayonThemes::DEFAULT_THEME && $save_args->delete) {
                     // Only delete the old path if it isn't the default theme
                     try {
                         // Delete the old path
@@ -734,31 +782,35 @@ class CrayonThemeEditorWP {
                 }
             }
             // Set the new theme in settings
-            if ($change_settings) {
+            if ($save_args->change_settings) {
                 CrayonGlobalSettings::set(CrayonSettings::THEME, $newID);
                 CrayonSettingsWP::save_settings();
             }
         } else {
-            CrayonLog::syslog("$oldID=$oldID\n\n$name=$name", "THEME SAVE");
+            CrayonLog::syslog("save_args->id=$save_args->id\n\nsave_args->name=$save_args->name", "THEME SAVE");
             echo -1;
         }
         exit();
     }
 
     public static function duplicate() {
+        check_ajax_referer('crayon-theme-editor-duplicate');
         CrayonSettingsWP::load_settings();
-        $oldID = $_POST['id'];
-        $oldPath = CrayonResources::themes()->path($oldID);
-        $_POST['css'] = file_get_contents($oldPath);
-        $_POST['delete'] = FALSE;
-        $_POST['allow_edit'] = FALSE;
-        $_POST['allow_edit_stock_theme'] = FALSE;
-        self::save();
+        $save_args = new CrayonThemeEditorArgs();
+        $save_args->oldId = sanitize_text_field($_POST['id']);
+        $oldPath = CrayonResources::themes()->path($save_args->oldId);
+        $save_args->css = file_get_contents($oldPath);
+        $save_args->delete = FALSE;
+        $save_args->allow_edit = FALSE;
+        $save_args->allow_edit_stock_theme = FALSE;
+        $save_args->name = stripslashes(sanitize_text_field($_POST['name']));
+        self::saveFromArgs($save_args);
     }
 
     public static function delete() {
+        check_ajax_referer('crayon-theme-editor-delete');
         CrayonSettingsWP::load_settings();
-        $id = $_POST['id'];
+        $id = sanitize_text_field($_POST['id']);
         $dir = CrayonResources::themes()->dirpath_for_id($id);
         if (is_dir($dir) && CrayonResources::themes()->exists($id)) {
             try {
@@ -777,10 +829,11 @@ class CrayonThemeEditorWP {
     }
 
     public static function submit() {
+        check_ajax_referer('crayon-theme-editor-submit');
         global $CRAYON_EMAIL;
         CrayonSettingsWP::load_settings();
-        $id = $_POST['id'];
-        $message = $_POST['message'];
+        $id = sanitize_text_field($_POST['id']);
+        $message = sanitize_text_field($_POST['message']);
         $dir = CrayonResources::themes()->dirpath_for_id($id);
         $dest = $dir . 'tmp';
         wp_mkdir_p($dest);
@@ -812,6 +865,7 @@ class CrayonThemeEditorWP {
     }
 
     public static function getCSSInfo($css) {
+        CrayonLog::debug("css=$css", "getCSSInfo");
         $info = array();
         preg_match(self::RE_COMMENT, $css, $matches);
         if (count($matches)) {
@@ -825,15 +879,19 @@ class CrayonThemeEditorWP {
                 }
             }
         }
+        CrayonLog::debug($info, "getCSSInfo");
         return $info;
     }
 
     public static function cssInfoToString($info) {
+        CrayonLog::log($info, "cssInfoToString");
         $str = "/*\n";
         foreach ($info as $id => $value) {
             $str .= self::getFieldName($id) . ': ' . $value . "\n";
         }
         $str .= "*/";
+        
+        CrayonLog::log("result = $str", "cssInfoToString");
         return $str;
     }
 

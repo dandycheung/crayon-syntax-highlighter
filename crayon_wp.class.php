@@ -3,9 +3,9 @@
 Plugin Name: Crayon Syntax Highlighter
 Plugin URI: https://github.com/aramk/crayon-syntax-highlighter
 Description: Supports multiple languages, themes, highlighting from a URL, local file or post text.
-Version: _2.8.5_beta
-Author: Aram Kocharyan
-Author URI: http://aramk.com/
+Version: 2.8.40
+Author: Aram Kocharyan, Fedor Urvanov
+Author URI: http://aramk.com/, https://urvanov.ru
 Text Domain: crayon-syntax-highlighter
 Domain Path: /trans/
 License: GPL2
@@ -34,10 +34,10 @@ if (CRAYON_THEME_EDITOR) {
 require_once('crayon_settings_wp.class.php');
 
 crayon_set_info(array(
-	'Version' => '_2.7.2_beta',
-	'Date' => '25th April, 2015',
-	'AuthorName' => 'Aram Kocharyan',
-	'PluginURI' => 'https://github.com/aramk/crayon-syntax-highlighter',
+	'Version' => '2.8.40',
+	'Date' => '10th August, 2025',
+	'AuthorName' => 'Aram Kocharyan & Fedor Urvanov',
+	'PluginURI' => 'https://github.com/<aramk|urvanov-ru>/crayon-syntax-highlighter',
 ));
 
 /* The plugin class that manages all other classes and integrates Crayon with WP */
@@ -165,7 +165,9 @@ class CrayonWP {
         $crayon->is_inline($inline);
 
         // Determine if we should highlight
-        $highlight = array_key_exists('highlight', $atts) ? CrayonUtil::str_to_bool($atts['highlight'], FALSE) : TRUE;
+        $highlight = array_key_exists('highlight', $atts)
+                ? CrayonUtil::str_to_bool($atts['highlight'], FALSE)
+                : CrayonGlobalSettings::val(CrayonSettings::HIGHLIGHT);
         $crayon->is_highlighted($highlight);
         return $crayon;
     }
@@ -218,9 +220,9 @@ class CrayonWP {
 
     public static function ajax_highlight() {
         header('Content-Type: text/plain');
-        $code = isset($_POST['code']) ? $_POST['code'] : null;
+        $code = isset($_POST['code']) ? sanitize_text_field($_POST['code']) : null;
         if (!$code) {
-            $code = isset($_GET['code']) ? $_GET['code'] : null;
+        	$code = isset($_GET['code']) ? sanitize_text_field($_GET['code']) : null;
         }
         if ($code) {
             echo self::highlight($code, FALSE);
@@ -545,6 +547,7 @@ class CrayonWP {
 
             CrayonLog::debug('enqueue');
             global $CRAYON_VERSION;
+            CrayonLog::debug('Loading settings...');
             CrayonSettingsWP::load_settings(TRUE);
             if (CRAYON_MINIFY) {
                 wp_enqueue_style('crayon', plugins_url(CRAYON_STYLE_MIN, __FILE__), array(), $CRAYON_VERSION);
@@ -555,6 +558,7 @@ class CrayonWP {
                 wp_enqueue_script('crayon_util_js', plugins_url(CRAYON_JS_UTIL, __FILE__), array('jquery'), $CRAYON_VERSION);
                 CrayonSettingsWP::other_scripts();
             }
+            CrayonLog::debug('Initializing js settings...');
             CrayonSettingsWP::init_js_settings();
             self::$enqueued = TRUE;
         }
@@ -658,11 +662,6 @@ class CrayonWP {
             return $the_content;
         }
 
-        global $post;
-
-        // Go through queued posts and find crayons
-        $post_id = strval($post->ID);
-
         if (self::$is_excerpt) {
             CrayonLog::debug('excerpt');
             if (CrayonGlobalSettings::val(CrayonSettings::EXCERPT_STRIP)) {
@@ -673,6 +672,11 @@ class CrayonWP {
             // Otherwise Crayon remains with ID and replaced later
             return $the_content;
         }
+
+        global $post;
+        
+        // Go through queued posts and find crayons
+        $post_id = strval($post->ID);
 
         // Find if this post has Crayons
         if (array_key_exists($post_id, self::$post_queue)) {
@@ -707,8 +711,20 @@ class CrayonWP {
         return $the_content;
     }
 
-    public static function pre_comment_text($text) {
-        global $comment;
+    public static function pre_comment_text($text, $comment, $args) {
+        // according to
+        // https://developer.wordpress.org/reference/hooks/comment_text/
+        // this filter calls in different places.
+        //
+        // https://github.com/WordPress/WordPress/blob/01876b090612c0d2825a896a7ba0e7fd6dd6decc/wp-includes/comment.php#L48
+        // calls it with $comment === null
+        //
+        // https://github.com/WordPress/WordPress/blob/bb26471543b104e047f9f4b264810adc372cd6ce/wp-includes/comment-template.php#L1094
+        // calls it with the object $comment = get_comment( $comment_id ); as $comment
+        if ($comment === null) {
+            return $text;
+        }
+        // We process only call with filled $comment
         $comment_id = strval($comment->comment_ID);
         if (array_key_exists($comment_id, self::$comment_captures)) {
             // Replace with IDs now that we need to
@@ -717,8 +733,20 @@ class CrayonWP {
         return $text;
     }
 
-    public static function comment_text($text) {
-        global $comment;
+    public static function comment_text($text, $comment, $args) {
+        // according to
+        // https://developer.wordpress.org/reference/hooks/comment_text/
+        // this filter calls in different places.
+        //
+        // https://github.com/WordPress/WordPress/blob/01876b090612c0d2825a896a7ba0e7fd6dd6decc/wp-includes/comment.php#L48
+        // calls it with $comment === null
+        //
+        // https://github.com/WordPress/WordPress/blob/bb26471543b104e047f9f4b264810adc372cd6ce/wp-includes/comment-template.php#L1094
+        // calls it with the object $comment = get_comment( $comment_id ); as $comment
+        if ($comment === null) {
+            return $text;
+        }
+        // We process only call with filled $comment
         $comment_id = strval($comment->comment_ID);
         // Find if this post has Crayons
         if (array_key_exists($comment_id, self::$comment_queue)) {
@@ -778,7 +806,13 @@ class CrayonWP {
         $post_class = $matches[4];
         $atts = $matches[5];
         $content = $matches[6];
-
+        CrayonLog::debug($pre_class, 'class_tag_pre_class');
+        CrayonLog::debug($quotes, 'class_tag_quotes');
+        CrayonLog::debug($class, 'class_tag_class');
+        CrayonLog::debug($post_class, 'class_tag_post_class');
+        CrayonLog::debug($atts, 'class_tag_atts');
+        CrayonLog::debug($content, 'class_tag_content=');
+        
         // If we find a crayon=false in the attributes, or a crayon[:_]false in the class, then we should not capture
         $ignore_regex_atts = '#crayon\s*=\s*(["\'])\s*(false|no|0)\s*\1#msi';
         $ignore_regex_class = '#crayon\s*[:_]\s*(false|no|0)#msi';
@@ -900,6 +934,10 @@ class CrayonWP {
         self::refresh_post($post);
     }
 
+    public static function rest_after_insert($post, $request, $creating) {
+    	CrayonWP::save_post(null, $post);
+    }
+
     public static function filter_post_data($data, $postarr) {
         // Remove the selected CSS that may be present from the tag editor.
         CrayonTagEditorWP::init_settings();
@@ -996,6 +1034,7 @@ class CrayonWP {
     }
 
     public static function ajax() {
+        check_ajax_referer('crayon-hide-help');
         $allowed = array(CrayonSettings::HIDE_HELP);
         foreach ($allowed as $allow) {
             if (array_key_exists($allow, $_GET)) {
@@ -1125,22 +1164,23 @@ class CrayonWP {
 
             // Upgrade database and settings
 
-            if (CrayonUtil::version_compare($version, '1.7.21') < 0) {
+            CrayonLog::log($version, 'Upgrading database and settings');
+            if (version_compare($version, '1.7.21') < 0) {
                 $settings[CrayonSettings::SCROLL] = $defaults[CrayonSettings::SCROLL];
                 $touched = TRUE;
             }
 
-            if (CrayonUtil::version_compare($version, '1.7.23') < 0 && $settings[CrayonSettings::FONT] == 'theme-font') {
+            if (version_compare($version, '1.7.23') < 0 && $settings[CrayonSettings::FONT] == 'theme-font') {
                 $settings[CrayonSettings::FONT] = $defaults[CrayonSettings::FONT];
                 $touched = TRUE;
             }
 
-            if (CrayonUtil::version_compare($version, '1.14') < 0) {
+            if (version_compare($version, '1.14') < 0) {
                 CrayonLog::syslog("Updated to v1.14: Font size enabled");
                 $settings[CrayonSettings::FONT_SIZE_ENABLE] = TRUE;
             }
 
-            if (CrayonUtil::version_compare($version, '1.17') < 0) {
+            if (version_compare($version, '1.17') < 0) {
                 $settings[CrayonSettings::HIDE_HELP] = FALSE;
             }
 
@@ -1301,8 +1341,8 @@ if (defined('ABSPATH')) {
         if (CrayonGlobalSettings::val(CrayonSettings::COMMENTS)) {
             /* XXX This is called first to match Crayons, then higher priority replaces after other filters.
              Prevents Crayon from being formatted by the filters, and also keeps original comment formatting. */
-            add_filter('comment_text', 'CrayonWP::pre_comment_text', 1);
-            add_filter('comment_text', 'CrayonWP::comment_text', 100);
+            add_filter('comment_text', 'CrayonWP::pre_comment_text', 1, 3);
+            add_filter('comment_text', 'CrayonWP::comment_text', 100, 3);
         }
 
         // This ensures Crayons are not formatted by WP filters. Other plugins should specify priorities between 1 and 100.
@@ -1317,6 +1357,7 @@ if (defined('ABSPATH')) {
         }
     } else {
         // Update between versions
+        CrayonLog::log("Calling update plugin...");
         CrayonWP::update();
         // For marking a post as containing a Crayon
         add_action('update_post', 'CrayonWP::save_post', 10, 2);
@@ -1330,6 +1371,21 @@ if (defined('ABSPATH')) {
         add_action('edit_comment', 'CrayonWP::save_comment', 10, 2);
     }
     add_filter('init', 'CrayonWP::init_ajax');
+    add_action('rest_after_insert_post', 'CrayonWP::rest_after_insert', 10, 3);
 }
+
+function register_crayon_gutenberg_block() {
+    global $CRAYON_VERSION;
+    wp_register_style('crayon-editor',
+        plugins_url(CRAYON_EDITOR_CSS, __FILE__),
+        array( 'wp-edit-blocks' ), $CRAYON_VERSION);
+    
+    register_block_type( 'crayon/code-block', array(
+        'editor_style' => 'crayon-editor'//,
+        //'editor_script' => 'crayon_te_js',
+    ) );
+}
+
+add_action('init', 'register_crayon_gutenberg_block');
 
 ?>

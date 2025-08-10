@@ -1,4 +1,146 @@
-(function ($) {
+(function ($, wp) {
+    var CRAYON_INLINE_CSS = 'crayon-inline';
+    
+    var el = wp.element.createElement,
+    registerBlockType = wp.blocks.registerBlockType,
+    blockStyle = {  };
+    
+    registerBlockType( 'crayon/code-block', {
+        title: 'Crayon Syntax Highlighter',
+
+        icon: 'editor-code',
+
+        category: 'formatting',
+        attributes: {
+            content: {
+                type: 'string',
+                source: 'html',
+                selector: 'div',
+            }
+        },
+        edit: function( props ) {
+            var content = props.attributes.content;
+            function onChangeContent( newContent ) {
+                props.setAttributes( { content: newContent } );
+            }
+
+            return el(
+                wp.element.Fragment,
+                null,
+                el(
+                    wp.editor.BlockControls,
+                    null,
+                    el(
+                        wp.components.Toolbar,
+                        null,
+                        el(
+                            wp.components.IconButton,
+                            {
+                                icon: 'editor-code',
+                                title: 'Crayon',
+                                onClick: function() {
+                                     window.CrayonTagEditor.showDialog({
+                                         update: function(shortcode) {
+                                        },
+                                        br_html_block_after : '',
+                                        input: 'decode',
+                                        output: 'encode',
+                                        node:  content ? CrayonUtil.htmlToElements(content)[0] : null,
+                                         insert: function(shortcode) {
+                                                         onChangeContent(
+                                                             shortcode
+                                                         )
+                                                     
+                                
+                                         }
+                                    });
+
+                                   }
+                            },
+                            "Crayon"
+                        )
+                    )
+                ),
+                el( 'div', { style: blockStyle, dangerouslySetInnerHTML: {__html: props.attributes.content == null ? '10 REM Your code will be here<br>20 PRINT "HELLO, WORLD!"' : props.attributes.content} })//, props.attributes.content )
+            );
+        },
+
+        save: function( props ) {
+            var content = props.attributes.content;
+            return el('div', { dangerouslySetInnerHTML : {__html : content} });
+        },
+    } );
+
+    var CrayonButton = function( props ) {
+        return wp.element.createElement(
+            wp.editor.RichTextToolbarButton, {
+                icon: 'editor-code',
+                title: 'Crayon',
+                onClick: function(onClickArg) {
+                    var activeFormat = wp.richText.getActiveFormat(props.value, 'crayon/code-inline');
+                    var startIndex = props.value.start;
+                    var endIndex = props.value.end;
+                    
+                    if (activeFormat) {
+                        var format = 'crayon/code-inline';
+                        while ( props.value.formats[startIndex] && props.value.formats[ startIndex ].find(function(el) {return el.type == format;} )) {
+                            startIndex--;
+                        }
+                            startIndex++;
+                    
+                        endIndex++;
+                    
+                        while (props.value.formats[endIndex] &&  props.value.formats[ endIndex ].find(function(el) {return el.type == format;} ) ) {
+                            endIndex++;
+                        }
+                        var inputRichTextValue = wp.richText.slice(props.value, startIndex, endIndex);
+                        var inputValue = wp.richText.toHTMLString({
+                            value: inputRichTextValue});
+                        var inputNode = CrayonUtil.htmlToElements(inputValue)[0];
+                    } else {
+                    	var inputRichTextValue = wp.richText.slice(props.value, startIndex, endIndex);
+                        var inputValue = '<span class="' + CRAYON_INLINE_CSS + '">' + wp.richText.toHTMLString({
+                            value: inputRichTextValue}) + '</span>';
+                        var inputNode = CrayonUtil.htmlToElements(inputValue)[0];
+                    }
+                    
+
+                     window.CrayonTagEditor.showDialog({
+                         update: function(shortcode) {
+                        },
+                        node:  inputNode,
+                        input: 'decode',
+                        output: 'encode',
+                        insert: function(shortcode) {
+                             props.onChange(
+                               
+                    
+                                 wp.richText.insert(
+                                props.value,
+                                wp.richText.create({
+                                    html:shortcode
+                                }),
+                                startIndex,
+                                endIndex
+                             )
+                         );
+                    
+                         }
+                    });
+                },
+                isActive: props.isActive
+            }
+        );
+    }
+    
+    wp.richText.registerFormatType(
+        'crayon/code-inline', {
+            title: 'Crayon',
+            tagName: 'span',
+            className: CRAYON_INLINE_CSS,
+            edit: CrayonButton
+        }
+    );
 
     window.CrayonTagEditor = new function () {
         var base = this;
@@ -25,6 +167,8 @@
 
         // CSS
         var dialog, code, clear, submit, cancel;
+        
+        var br_html_block_after;
 
         var colorboxSettings = {
             inline: true,
@@ -83,7 +227,11 @@
                 return;
             }
             // Load the editor content
-            CrayonUtil.getAJAX({action: 'crayon-tag-editor', is_admin: gs.is_admin}, function (data) {
+            CrayonUtil.getAJAX({
+                    action: 'crayon-tag-editor',
+                    _ajax_nonce: crayonTagEditorNonces.tagEditor,
+                    is_admin: gs.is_admin
+                    }, function (data) {
                 dialog = $('<div id="' + s.css + '"></div>');
                 dialog.appendTo('body').hide();
                 dialog.html(data);
@@ -185,11 +333,11 @@
         base.showDialog = function (args) {
             var wasLoaded = loaded;
             base.loadDialog(function () {
-                if (!wasLoaded) {
+                // if (!wasLoaded) {
                     // Forcefully load the colorbox. Otherwise it populates the content after opening the window and
                     // never renders.
                     $.colorbox(colorboxSettings);
-                }
+                // }
                 base._showDialog(args);
             });
         };
@@ -205,7 +353,8 @@
                 ed: null,
                 node: null,
                 input: null,
-                output: null
+                output: null,
+                br_html_block_after: '<p>&nbsp;</p>',
             }, args);
 
             // Need to reset all settings back to original, clear yellow highlighting
@@ -219,6 +368,7 @@
             inputHTML = args.input;
             outputHTML = args.output;
             editor_name = args.editor_str;
+            br_html_block_after = args.br_html_block_after;
             var currNode = args.node;
             var currNode = args.node;
             is_inline = false;
@@ -271,7 +421,7 @@
                     }
 
                     // Inline
-                    is_inline = currCrayon.hasClass(s.inline_css);
+                    is_inline = currCrayon.hasClass(CRAYON_INLINE_CSS);
                     atts['inline'] = is_inline ? '1' : '0';
 
                     // Ensure language goes to fallback if invalid
@@ -429,7 +579,7 @@
                     if (editor_name == 'html') {
                         br_after = br_before = ' \n';
                     } else {
-                        br_after = '<p>&nbsp;</p>';
+                        br_after = br_html_block_after;
                     }
                 } else {
                     // Add a space after
@@ -447,11 +597,11 @@
             var atts = {};
             shortcode += 'class="';
 
-            var inline_re = new RegExp('\\b' + s.inline_css + '\\b', 'gim');
+            var inline_re = new RegExp('\\b' + CRAYON_INLINE_CSS + '\\b', 'gim');
             if (is_inline) {
                 // If don't have inline class, add it
                 if (inline_re.exec(currClasses) == null) {
-                    currClasses += ' ' + s.inline_css + ' ';
+                    currClasses += ' ' + CRAYON_INLINE_CSS + ' ';
                 }
             } else {
                 // Remove inline css if it exists
@@ -610,7 +760,7 @@
 
         base.isCrayon = function (node) {
             return node != null &&
-                (node.nodeName == 'PRE' || (node.nodeName == 'SPAN' && $(node).hasClass(s.inline_css)));
+                (node.nodeName == 'PRE' || (node.nodeName == 'SPAN' && $(node).hasClass(CRAYON_INLINE_CSS)));
         };
 
         base.elemValue = function (obj) {
@@ -628,4 +778,4 @@
         };
 
     };
-})(jQueryCrayon);
+})(jQueryCrayon, wp);

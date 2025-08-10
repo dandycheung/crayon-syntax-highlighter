@@ -1,15 +1,23 @@
 === Crayon Syntax Highlighter ===
-Contributors: akarmenia
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=AW99EMEPQ4CFE&lc=AU&item_name=Crayon%20Syntax%20Highlighter%20Donation&item_number=crayon%2ddonate&currency_code=AUD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
+Contributors: akarmenia, urvanov
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=AW99EMEPQ4CFE&lc=AU&item_name=Crayon%20Syntax%20Highlighter%20Donation&item_number=crayon%2ddonate&currency_code=AUD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted, https://yoomoney.ru/to/41001288941320
 License: GPLv3 or later
 Tags: syntax highlighter, syntax, highlighter, highlighting, crayon, code highlighter, bbpress
-Requires at least: 3.0
-Tested up to: 4.5.2
-Stable tag: trunk
+Requires at least: 6.7
+Tested up to: 6.8.1
+Stable tag: 2.8.40
 
 Syntax Highlighter supporting multiple languages, themes, fonts, highlighting from a URL, or post text.
 
 == Description ==
+
+Reincarnation of the original Crayon Syntax Highlighter.
+
+Use special Syntax Highlighter block in new posts. Don't use standard Code block. (??? -- dandycheung)
+
+<a href = "https://www.youtube.com/watch?v=2aBtVJOOqqA">Watch how to use the plugin</a>:
+
+https://www.youtube.com/watch?v=2aBtVJOOqqA
 
 A Syntax Highlighter built in PHP and jQuery that supports customizable languages and themes.
 It can highlight from a URL, or Wordpress post text. Crayon makes it easy to manage Language files and define
@@ -29,8 +37,8 @@ It also supports some neat features like:
 * <a href="http://aramk.com/blog/2012/09/26/converting-legacy-tags-to-pre/" target="_blank">Converting legacy code in blog posts/comments to &lt;pre&gt;</a>
 * Remote request caching
 * <a href="http://aramk.com/blog/2011/12/25/mixed-language-highlighting-in-crayon" target="_blank">Mixed Language Highlighting</a> in a single Crayon
-* <a href="http://aramk.com/blog/2011/12/27/mini-tags-in-crayon/" target="_blank">Mini Tags</a> like [php][/php]
-* <a href="http://aramk.com/blog/2012/03/07/inline-crayons/" target="_blank">Inline Tags</a> floating in sentences
+* <a href="https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Mini-Tags-and-Plain-Tags-in-Crayon" target="_blank">Mini Tags</a> like [php][/php]
+* <a href="https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Inline-Tags,-%60Backquotes%60-and-Crayons-in-Comments" target="_blank">Inline Tags</a> floating in sentences
 * Crayons in comments
 * &#96;Backquotes&#96; become &lt;code&gt;
 * &lt;pre&gt; tag support, option to use <code>setting-value</code> in the class attribute
@@ -132,33 +140,34 @@ See the <a href="http://aramk.com/blog/2011/09/23/crayon-language-file-specifica
 
 **International Languages**
 
-* Arabic (thanks to <a href="http://djennadhamza.eb2a.com/" target="_blank">Djennad Hamza</a>)
-* Chinese Simplified (thanks to <a href="http://smerpup.com/" target="_blank">Dezhi Liu</a> & <a href="http://neverno.me/" target="_blank">Jash Yin</a>)
+* Arabic (thanks to Djennad Hamza),
+* Brasil Portuguese translation from Eric Sornoso (https://mealfan.com) 
+* Chinese Simplified (thanks to <a href="http://smerpup.com/" target="_blank">Dezhi Liu</a> & Jash Yin)
 * Chinese Traditional (thanks to <a href="http://www.arefly.com/" target="_blank">Arefly</a>)
 * Dutch (thanks to <a href="https://twitter.com/RobinRoelofsen" target="_blank">Robin Roelofsen</a> & <a href="https://twitter.com/#!/chilionsnoek" target="_blank">Chilion Snoek</a>)
 * Finnish (thanks to <a href="https://github.com/vahalan" target="_blank">vahalan</a>)
 * French (thanks to <a href="https://vhf.github.io" target="_blank">Victor Felder</a>)
 * German (thanks to <a href="http://www.technologyblog.de/" target="_blank">Stephan Knau&szlig;</a>)
 * Italian (thanks to <a href="http://www.federicobellucci.net/" target="_blank">Federico Bellucci</a>)
-* Japanese (thanks to <a href="https://twitter.com/#!/west_323" target="_blank">@west_323</a>)
+* Japanese (thanks to <a href="https://twitter.com/#!/west_323" target="_blank">@west_323</a> and Jin Koyama from https://tabibitojin.com/) 
 * Korean (thanks to <a href="https://github.com/dokenzy" target="_blank">dokenzy</a>)
 * Lithuanian (thanks to Vincent G)
 * Norwegian (thanks to <a href="http://www.jackalworks.com/blogg" target="_blank">Jackalworks</a>)
 * Persian (thanks to MahdiY)
 * Polish (thanks to <a href="https://github.com/toszcze" target="_blank">Bartosz Romanowski</a>, <a href="http://rob006.net/" target="_blank">Robert Korulczyk</a>)
-* Portuguese (thanks to <a href="http://www.adonai.eti.br" target="_blank">Adonai S. Canez</a>)
+* Portuguese (thanks to <a href="http://www.adonai.eti.br" target="_blank">Adonai S. Canez</a>  and <a href="https://mealfan.com">Eric S from Mealfan.com</a>)
 * Russian (thanks to <a href="http://simplelib.com" target="_blank">Minimus</a> & <a href="http://atlocal.net/" target="_blank">Di_Skyer</a>)
 * Slovak (thanks to Branco, <a href="https://twitter.com/#!/webhostgeeks" target="_blank">webhostgeeks/</a>)
 * Slovenian (thanks to Jan Su&#353;nik, <a href="http://jodlajodla.si/" target="_blank">http://jodlajodla.si/</a>)
 * Spanish (thanks to <a href="http://www.hbravo.com/" target="_blank">Hermann Bravo</a>)
-* Tamil (thanks to <a href="http://kks21199.mrgoogleglass.com/" target="_blank">KKS21199</a>)
+* Tamil (thanks to KKS21199)
 * Turkish (thanks to <a href="http://hakanertr.wordpress.com" target="_blank">Hakan</a>)
 * Ukrainian (thanks to <a href="http://getvoip.com/blog" target="_blank">Michael Yunat</a>)
 * Help from translators at improving/adding to this list greatly appreciated!
 
 **Articles**
 
-These are helpful for discovering new features.
+These are helpful for discovering new features (Links don't work. TODO: think about moving it to my site).
 
 * <a href="http://aramk.com/blog/2012/09/26/internal-post-management-crayon/" target="_blank">Internal Post Management in Crayon</a>
 * <a href="http://aramk.com/blog/2012/09/26/converting-legacy-tags-to-pre/" target="_blank">Converting Legacy Tags to &lt;pre&gt;</a>
@@ -303,6 +312,8 @@ Thanks to all those who donate to the project:
 * Even easier, just go to <strong>Plugins > Add New</strong> and search for "Crayon".
 * You can change settings and view help under <strong>Settings > Crayon</strong> in the Wordpress Admin.
 * Make sure your theme either manually specifies jQuery, or uses the version shipped with Wordpress (recommended). You should NOT print out jQuery manually in the header as a script tag. <a href="http://wordpress.stackexchange.com/questions/1535/how-to-dequeue-a-script" target="_blank">Enqueueing it in Wordpresss</a> will prevent duplicate jQuery includes (also bad) and will allow other scripts to be placed AFTER jQuery in the head tag so they can use it. If you're uncertain, just let Wordpress handle it and remove any jQuery script tags you find in your theme's header.php.
+* All old Crayon inline and blocks should work by default.
+* Don't use standard Code block in new posts. Use special Syntax Highlighter block in Gutenberg editor.
 
 == Frequently Asked Questions ==
 
@@ -322,7 +333,180 @@ Contact me at http://twitter.com/crayonsyntax or crayon.syntax@gmail.com.
 
 == Changelog ==
 
-= 2.8.5
+= 2.8.40 =
+* FIXED
+    * Fixed broken settings after 2.8.39
+
+= 2.8.39 =
+* FIXED
+    * Fixed 'Translations loaded too early error' notice. (https://wordpress.org/support/topic/translations-loaded-too-early-error/)
+
+= 2.8.38 =
+* FIXED
+    * moved load_textdomain to after_setup_theme, so that it loads after in…
+    * Fix warning in the_content function
+
+= 2.8.37 =
+* FIXED
+    * Warning message. PHP Deprecated: pathinfo(): Passing null to parameter #1 (https://wordpress.org/support/topic/passing-null-to-string-warning/)
+    * Warning message. Trying to get property 'comment_ID' of non-object (https://wordpress.org/support/topic/comment_id-error/).
+
+= 2.8.36 =
+* FIXED
+    * Bug in processing comments.
+    
+= 2.8.35 =
+* FIXED
+    * Added interpolated expressions highlighting to JavaScript language.
+    * Warnings about global comment variable in comment highlighting.
+    * Minified min.js files.
+
+= 2.8.34 =
+* ADDED
+    * Added "Highlight code" setting in "Code" section of plugin settings.
+* FIXED
+    * CSRF vulnerability in the theme editor and the tag editor. Added nonces.
+    * Replaced deprecated jQuery "live" to jQuery "on"
+
+= 2.8.33 =
+* FIXED
+    * Copy button should work even without "Toggle plain text" button.
+
+= 2.8.32 =
+* FIXED
+    * Enabled "Copy" button for touch screens.
+
+= 2.8.31 =
+* FIXED
+    * Removed my_custom_render
+    
+= 2.8.30 =
+* FIXED
+    * Made Urvanov_Syntax_Highlighter_Plugin::my_custom_render public and static.
+
+= 2.8.29 =
+* FIXED
+    * Check HTTP_USER_AGENT existance in `$_SERVER` array
+
+= 2.8.28 =
+* ADDED
+    * Green White theme from Di_Skyer (http://atlocal.net/)
+    * Brasil Portuguese translation from Eric Sornoso (https://mealfan.com) 
+    * Zidingyi theme from seouc (http://www.seouc.com/)
+* FIXED
+    * rob-stoecklein fix for KnowAll theme (https://github.com/urvanov-ru/crayon-syntax-highlighter/pull/37)
+
+= 2.8.27 =
+* ADDED
+   * New japanese translation from Jin Koyama (https://tabibitojin.com/).
+
+= 2.8.26 =
+* FIXED
+    * Copy button copied incorrect code for HTML entities.
+
+
+= 2.8.25 =
+* ADDED
+    * Fixed some links to help page
+* FIXED
+    * Copy button text.
+    * Line numbers copied when you copied page content
+
+= 2.8.24 =
+* ADDED
+    * Updated copy button behaviour
+    * Turned back to jQuery ready function
+    * updated readme
+
+
+= 2.8.23 =
+* ADDED
+    * Kotlin support
+    * TypeScript support
+
+= 2.8.22 =
+* ADDED
+    * Basic example for a new block
+* FIXED:
+    * error in JS log function
+
+= 2.8.21 =
+* ADDED
+    * Removing jQuery. Replaced jQuery.ready to DOMContentLoaded
+
+= 2.8.20 =
+* FIXED
+    * Simple release without any changes.
+
+= 2.8.19 =
+* FIXED
+    * Replaced version_compare to standart PHP function.
+
+= 2.8.18 =
+* ADDED
+    * More detailed log to version compare.
+
+= 2.8.17 =
+* FIXED
+    * Version compare additional check is_countable.
+
+= 2.8.16 =
+* FIXED
+    * Classic editor button should exists now.
+    
+
+= 2.8.15 =
+* FIXED
+    * A non well formed numeric value with Custom Font Size unchecked
+
+= 2.8.14 =
+* FIXED
+    * Fix save post for REST API (For Gutenberg).
+
+= 2.8.13 =
+* FIXED
+    * Some broken urls.
+
+= 2.8.12 =
+* FIXED
+    * Site and donate url in class-urvanov-syntax-highlighter-global.php
+    * Fix mark in readme.txt
+    * "Open Code in New Window" syntax highlighting.
+
+
+= 2.8.11 =
+* FIXED
+    * [BUG] Languages parsed with errors
+
+
+= 2.8.10 =
+* FIXED
+    * Theme editor fixed.
+    * Crayon themes support.
+
+= 2.8.9 =
+* FIXED:
+    * Deprecated: implode(): Passing glue string after array is deprecated. Swap the parameters
+    * Notice: A non well formed numeric value in class-urvanov-syntax-highlighter-formatter
+    * Bug report: when add `\(*)` in codes. It will show {{urvanov-syntax-highlighter-internal:0}}
+
+= 2.8.8 =
+* FIXED:
+    * Fix invisible button in TinyMCE editor.
+    * Fix readme.txt
+    * Fix readme.md
+
+= 2.8.7 =
+* FIXED:
+    * Only bug fixes with crayon inline.
+
+= 2.8.6 =
+* ADDED:
+    * Refactored to fit Wordpress Code Codex. 
+    * Renamed to Urvanov Syntax Highlighter.
+    * PHP 7 support
+
+= 2.8.5 =
 * ADDED: 
     * Verilog language, thanks to https://github.com/gdevic.
 * FIXED:
@@ -1080,7 +1264,7 @@ Contact me at http://twitter.com/crayonsyntax or crayon.syntax@gmail.com.
 * Added namespacing to crayon.js to prevent conflicts
 
 = 1.7.3 =
-* Added Mini Tags and Plain Tags into Crayon. http://aramk.com/blog/2011/12/27/mini-tags-in-crayon/
+* Added Mini Tags and Plain Tags into Crayon. https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Mini-Tags-and-Plain-Tags-in-Crayon
 * Fixed a bug causing RSS feeds to contain malformed HTML of Crayons, now it shows plain code with correct indentations. Thanks to Артём.
 * Updated help in Settings and https://github.com/aramk/crayon-syntax-highlighter
 

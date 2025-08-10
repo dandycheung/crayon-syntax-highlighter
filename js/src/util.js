@@ -77,6 +77,15 @@ var jQueryCrayon = jQuery;
             args.version = settings.version;
             $.get(settings.ajaxurl, args, callback);
         };
+        
+        /**
+         * @param {String} HTML representing any number of sibling elements
+         * @return {NodeList} 
+         */
+        base.htmlToElements = function (html) {
+            return $.parseHTML(html, document, true);
+        }
+
 
         base.postAJAX = function (args, callback) {
             args.version = settings.version;
@@ -102,14 +111,14 @@ var jQueryCrayon = jQuery;
         };
 
         base.log = function (string) {
-            if (typeof console != 'undefined' && settings.debug) {
+            if (typeof console != 'undefined' && settings && settings.debug) {
                 console.log(string);
             }
         };
 
         base.decode_html = function (str) {
-            return String(str).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(
-                /&gt;/g, '>');
+            return String(str).replace(/&lt;/g, '<').replace(
+                /&gt;/g, '>').replace(/&amp;/g, '&');
         };
 
         base.encode_html = function (str) {

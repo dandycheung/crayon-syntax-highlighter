@@ -80,17 +80,25 @@ class CrayonTagEditorWP {
 
         if (CRAYON_MINIFY) {
             wp_deregister_script('crayon_js');
-            wp_enqueue_script('crayon_js', plugins_url(CRAYON_JS_TE_MIN, dirname(dirname(__FILE__))), array('jquery', 'quicktags'), $CRAYON_VERSION);
+            wp_enqueue_script('crayon_js', plugins_url(CRAYON_JS_TE_MIN, dirname(dirname(__FILE__))), array('jquery', 'quicktags', 'wp-rich-text' , 'wp-element', 'wp-editor', 'wp-blocks', 'wp-components', 'wp-html-entities'), $CRAYON_VERSION);
             CrayonSettingsWP::init_js_settings();
             wp_localize_script('crayon_js', 'CrayonTagEditorSettings', self::$settings);
+            self::add_tag_editor_nonces('crayon_js');
         } else {
             wp_enqueue_script('crayon_colorbox_js', plugins_url(CRAYON_COLORBOX_JS, __FILE__), array('jquery'), $CRAYON_VERSION);
             wp_enqueue_style('crayon_colorbox_css', plugins_url(CRAYON_COLORBOX_CSS, __FILE__), array(), $CRAYON_VERSION);
-            wp_enqueue_script('crayon_te_js', plugins_url(CRAYON_TAG_EDITOR_JS, __FILE__), array('crayon_util_js', 'crayon_colorbox_js'), $CRAYON_VERSION);
+            wp_enqueue_script('crayon_te_js', plugins_url(CRAYON_TAG_EDITOR_JS, __FILE__), array('crayon_util_js', 'crayon_colorbox_js', 'wpdialogs', 'wp-rich-text' , 'wp-element', 'wp-editor', 'wp-blocks', 'wp-components', 'wp-html-entities'), $CRAYON_VERSION);
             wp_enqueue_script('crayon_qt_js', plugins_url(CRAYON_QUICKTAGS_JS, __FILE__), array('quicktags', 'crayon_te_js'), $CRAYON_VERSION, TRUE);
             wp_localize_script('crayon_te_js', 'CrayonTagEditorSettings', self::$settings);
+            self::add_tag_editor_nonces('crayon_te_js');
             CrayonSettingsWP::other_scripts();
         }
+    }
+    
+    public static function add_tag_editor_nonces($script_name) {
+        wp_localize_script($script_name, 'crayonTagEditorNonces', array(
+                'tagEditor' => wp_create_nonce( 'crayon-tag-editor' )
+        ));
     }
 
     public static function init_tinymce($init) {
@@ -166,6 +174,7 @@ class CrayonTagEditorWP {
     }
 
     public static function content() {
+        check_ajax_referer( 'crayon-tag-editor');
         CrayonSettingsWP::load_settings();
         $langs = CrayonLangs::sort_by_name(CrayonParser::parse_all());
         $curr_lang = CrayonGlobalSettings::val(CrayonSettings::FALLBACK_LANG);

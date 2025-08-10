@@ -103,6 +103,7 @@ class CrayonSettingsWP {
     }
 
     public static function other_scripts() {
+        CrayonLog::debug('other_scripts');
         global $CRAYON_VERSION;
         self::load_settings(TRUE);
         $deps = array('jquery', 'crayon_util_js');
@@ -111,10 +112,12 @@ class CrayonSettingsWP {
             wp_enqueue_script('crayon_jquery_popup', plugins_url(CRAYON_JQUERY_POPUP, __FILE__), array('jquery'), $CRAYON_VERSION);
             $deps[] = 'crayon_jquery_popup';
         }
-        wp_enqueue_script('crayon_js', plugins_url(CRAYON_JS, __FILE__), $deps, $CRAYON_VERSION);
+        $result = wp_enqueue_script('crayon_js', plugins_url(CRAYON_JS, __FILE__), $deps, $CRAYON_VERSION);
+        CrayonLog::debug($result, 'wp_enqueue_script='.$result);
     }
 
     public static function init_js_settings() {
+        CrayonLog::debug('Init js settings...');
         // This stores JS variables used in AJAX calls and in the JS files
         global $CRAYON_VERSION;
         self::load_settings(TRUE);
@@ -134,13 +137,16 @@ class CrayonSettingsWP {
         }
         if (!self::$js_strings) {
             self::$js_strings = array(
-                'copy' => crayon__('Press %s to Copy, %s to Paste'),
+                'copy' => crayon__('Copied to the clipboard'),
                 'minimize' => crayon__('Click To Expand Code')
             );
         }
+        CrayonLog::debug(self::$js_settings, 'CrayonSyntaxSettings to js...');
         if (CRAYON_MINIFY) {
-            wp_localize_script('crayon_js', 'CrayonSyntaxSettings', self::$js_settings);
-            wp_localize_script('crayon_js', 'CrayonSyntaxStrings', self::$js_strings);
+            $result = wp_localize_script('crayon_js', 'CrayonSyntaxSettings', self::$js_settings);
+            CrayonLog::debug($result, 'wp_localize_script CrayonSyntaxSettings result = '.$result);
+            $result = wp_localize_script('crayon_js', 'CrayonSyntaxStrings', self::$js_strings);
+            CrayonLog::debug($result, 'wp_localize_script CrayonSyntaxStrings result = '.$result);
         } else {
             wp_localize_script('crayon_util_js', 'CrayonSyntaxSettings', self::$js_settings);
             wp_localize_script('crayon_util_js', 'CrayonSyntaxStrings', self::$js_strings);
@@ -175,6 +181,7 @@ class CrayonSettingsWP {
             );
             wp_localize_script('crayon_admin_js', 'CrayonAdminSettings', self::$admin_js_settings);
         }
+
         if (!self::$admin_js_strings) {
             self::$admin_js_strings = array(
                 'prompt' => crayon__("Prompt"),
@@ -201,7 +208,18 @@ class CrayonSettingsWP {
             });
         </script>
 
-        <div id="crayon-main-wrap" class="wrap">
+        <?php 
+        $hideHelpNonce = wp_create_nonce( "crayon-hide-help" );
+        $showPostsNonce = wp_create_nonce( "crayon-show-posts" );
+        $showLangsNonce = wp_create_nonce( "crayon-show-langs" );
+        $showPreviewNonce = wp_create_nonce( "crayon-show-preview" );
+        ?>
+        <div id="crayon-main-wrap" class="wrap"
+               data-hide-help-nonce="<?php echo esc_attr($hideHelpNonce ) ?>"
+               data-show-posts-nonce="<?php echo esc_attr($showPostsNonce) ?>"
+               data-show-langs-nonce="<?php echo esc_attr($showLangsNonce) ?>"
+               data-show-preview-nonce="<?php echo esc_attr($showPreviewNonce) ?>"
+                >
 
             <div id="icon-options-general" class="icon32">
                 <br>
@@ -235,10 +253,22 @@ class CrayonSettingsWP {
                 </p>
             </form>
         </div>
-
-        <div id="crayon-theme-editor-wrap" class="wrap"></div>
-
-    <?php
+        <?php 
+        $themeEditorSaveNonce = wp_create_nonce( "crayon-theme-editor-save" );
+        $themeEditorDeleteNonce = wp_create_nonce( "crayon-theme-editor-delete" );
+        $themeEditorDuplicateNonce = wp_create_nonce( "crayon-theme-editor-duplicate" );
+        $themeEditorSubmitNonce = wp_create_nonce( "crayon-theme-editor-submit" );
+        $themeEditorGetNonce = wp_create_nonce( "crayon-theme-editor-get" );
+        
+        ?>
+        <div id="crayon-theme-editor-wrap" class="wrap"
+           data-save-nonce="<?php echo esc_attr($themeEditorSaveNonce) ?>"
+           data-delete-nonce="<?php echo esc_attr($themeEditorDeleteNonce) ?>"
+           data-duplicate-nonce="<?php echo esc_attr($themeEditorDuplicateNonce) ?>"
+           data-submit-nonce="<?php echo esc_attr($themeEditorSubmitNonce) ?>"
+           data-get-nonce="<?php echo esc_attr($themeEditorGetNonce) ?>"
+        ></div>
+   <?php
     }
 
     // Load the global settings and update them from the db
@@ -264,6 +294,7 @@ class CrayonSettingsWP {
             $upload = wp_upload_dir();
 
             CrayonLog::debug($upload, "WP UPLOAD FUNCTION");
+            CrayonLog::debug(CRAYON_DIR, "CRAYON_DIR=".CRAYON_DIR);
             CrayonGlobalSettings::upload_path(CrayonUtil::path_slash($upload['basedir']) . CRAYON_DIR);
             CrayonGlobalSettings::upload_url($upload['baseurl'] . '/' . CRAYON_DIR);
             CrayonLog::debug(CrayonGlobalSettings::upload_path(), "UPLOAD PATH");
@@ -671,9 +702,9 @@ class CrayonSettingsWP {
         foreach ($resources as $k => $v) {
             if (is_array($v) && count($v)) {
                 $data = $v[0];
-                $text = $v[1];
+                $text = crayon__($v[1]);
             } else {
-                $text = $v;
+                $text = crayon__($v);
             }
             $is_selected = $selected !== NULL && $selected == $k ? 'selected' : selected(self::$options[$id], $k, FALSE);
             $return .= '<option ' . (isset($data) ? 'data-value="' . $data . '"' : '') . ' value="' . $k . '" ' . $is_selected . '>' . $text . '</option>';
@@ -819,6 +850,7 @@ class CrayonSettingsWP {
     }
 
     public static function show_langs() {
+        check_ajax_referer( 'crayon-show-langs' );
         CrayonSettingsWP::load_settings();
         require_once(CRAYON_PARSER_PHP);
         if (($langs = CrayonParser::parse_all()) != FALSE) {
@@ -865,6 +897,7 @@ class CrayonSettingsWP {
     }
 
     public static function show_posts() {
+        check_ajax_referer( 'crayon-show-posts' );
         CrayonSettingsWP::load_settings();
         $postIDs = self::load_posts();
         $legacy_posts = self::load_legacy_posts();
@@ -904,6 +937,7 @@ class CrayonSettingsWP {
     }
 
     public static function show_preview() {
+    	check_ajax_referer( 'crayon-show-preview' );
         echo '<div id="content">';
 
         self::load_settings(); // Run first to ensure global settings loaded
@@ -916,7 +950,7 @@ class CrayonSettingsWP {
         // Load settings from GET and validate
         foreach ($_POST as $key => $value) {
             //	echo $key, ' ', $value , '<br/>';
-            $value = stripslashes($value);
+        	$value = stripslashes(sanitize_text_field($value));
             if (!in_array($key, $preview_settings)) {
                 $_POST[$key] = CrayonSettings::validate($key, $value);
             } else {
@@ -946,7 +980,7 @@ class CrayonSettingsWP {
         $path = CrayonGlobalSettings::plugin_path() . CRAYON_UTIL_DIR . '/sample/' . $lang . '.txt';
 
         if (isset($_POST[self::SAMPLE_CODE])) {
-            $crayon->code($_POST[self::SAMPLE_CODE]);
+            $crayon->code(sanitize_text_field($_POST[self::SAMPLE_CODE]));
         } else if ($lang && @file_exists($path)) {
             $crayon->url($path);
         } else {
@@ -1015,7 +1049,7 @@ class Human {
         // Preview checkbox
         self::checkbox(array(CrayonSettings::PREVIEW, crayon__('Enable Live Preview')), FALSE, FALSE);
         echo '</select><span class="crayon-span-10"></span>';
-        self::checkbox(array(CrayonSettings::ENQUEUE_THEMES, crayon__('Enqueue themes in the header (more efficient).') . self::help_button('http://aramk.com/blog/2012/01/07/enqueuing-themes-and-fonts-in-crayon/')));
+        self::checkbox(array(CrayonSettings::ENQUEUE_THEMES, crayon__('Enqueue themes in the header (more efficient).') . self::help_button('https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Enqueuing-Themes-and-Fonts-in-Crayon')));
         // Check if theme from db is loaded
         if ($missing_theme) {
             echo '<span class="crayon-error">', sprintf(crayon__('The selected theme with id %s could not be loaded'), '<strong>' . $db_theme . '</strong>'), '. </span>';
@@ -1046,7 +1080,7 @@ class Human {
             return;
         }
         echo '<div style="height:10px;"></div>';
-        self::checkbox(array(CrayonSettings::ENQUEUE_FONTS, crayon__('Enqueue fonts in the header (more efficient).') . self::help_button('http://aramk.com/blog/2012/01/07/enqueuing-themes-and-fonts-in-crayon/')));
+        self::checkbox(array(CrayonSettings::ENQUEUE_FONTS, crayon__('Enqueue fonts in the header (more efficient).') . self::help_button('https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Enqueuing-Themes-and-Fonts-in-Crayon')));
     }
 
     public static function code($editor = FALSE) {
@@ -1056,6 +1090,7 @@ class Human {
         echo '<span id="crayon-subsection-copy-check">';
         self::checkbox(array(CrayonSettings::PLAIN_TOGGLE, crayon__('Enable plain code toggling')));
         self::checkbox(array(CrayonSettings::SHOW_PLAIN_DEFAULT, crayon__('Show the plain code by default')));
+        self::checkbox(array(CrayonSettings::HIGHLIGHT, crayon__('Highlight code')));
         self::checkbox(array(CrayonSettings::COPY, crayon__('Enable code copy/paste')));
         echo '</span>';
         self::checkbox(array(CrayonSettings::POPUP, crayon__('Enable opening code in a window')));
@@ -1074,7 +1109,7 @@ class Human {
         self::checkbox(array(CrayonSettings::TRIM_CODE_TAG, crayon__('Remove &lt;code&gt; tags surrounding the shortcode content')));
         self::checkbox(array(CrayonSettings::ALTERNATE, crayon__('Allow Mixed Language Highlighting with delimiters and tags.') . self::help_button('http://aramk.com/blog/2011/12/25/mixed-language-highlighting-in-crayon/')));
         echo '<div class="crayon-hide-inline-only">';
-        self::checkbox(array(CrayonSettings::SHOW_MIXED, crayon__('Show Mixed Language Icon (+)')));
+        self::checkbox(array(CrayonSettings::SHOW_ALTERNATE, crayon__('Show Mixed Language Icon (+)')));
         echo '</div>';
         self::checkbox(array(CrayonSettings::TAB_CONVERT, crayon__('Convert tabs to spaces')));
         self::span(crayon__('Tab size in spaces') . ': ');
@@ -1086,19 +1121,19 @@ class Human {
     }
 
     public static function tags() {
-        self::checkbox(array(CrayonSettings::INLINE_TAG, crayon__('Capture Inline Tags') . self::help_button('http://aramk.com/blog/2012/03/07/inline-crayons/')));
-        self::checkbox(array(CrayonSettings::INLINE_WRAP, crayon__('Wrap Inline Tags') . self::help_button('http://aramk.com/blog/2012/03/07/inline-crayons/')));
+        self::checkbox(array(CrayonSettings::INLINE_TAG, crayon__('Capture Inline Tags') . self::help_button('https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Inline-Tags,-%60Backquotes%60-and-Crayons-in-Comments')));
+        self::checkbox(array(CrayonSettings::INLINE_WRAP, crayon__('Wrap Inline Tags') . self::help_button('https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Inline-Tags,-%60Backquotes%60-and-Crayons-in-Comments')));
         self::checkbox(array(CrayonSettings::CODE_TAG_CAPTURE, crayon__('Capture &lt;code&gt; as')), FALSE);
         echo ' ';
         self::dropdown(CrayonSettings::CODE_TAG_CAPTURE_TYPE, FALSE);
-        echo self::help_button('http://aramk.com/blog/2012/03/07/inline-crayons/') . '<br/>';
-        self::checkbox(array(CrayonSettings::BACKQUOTE, crayon__('Capture `backquotes` as &lt;code&gt;') . self::help_button('http://aramk.com/blog/2012/03/07/inline-crayons/')));
-        self::checkbox(array(CrayonSettings::CAPTURE_PRE, crayon__('Capture &lt;pre&gt; tags as Crayons') . self::help_button('http://aramk.com/blog/2011/12/27/mini-tags-in-crayon/')));
+        echo self::help_button('https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Inline-Tags,-%60Backquotes%60-and-Crayons-in-Comments') . '<br/>';
+        self::checkbox(array(CrayonSettings::BACKQUOTE, crayon__('Capture `backquotes` as &lt;code&gt;') . self::help_button('https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Inline-Tags,-%60Backquotes%60-and-Crayons-in-Comments')));
+        self::checkbox(array(CrayonSettings::CAPTURE_PRE, crayon__('Capture &lt;pre&gt; tags as Crayons') . self::help_button('https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Mini-Tags-and-Plain-Tags-in-Crayon')));
 
-        echo '<div class="note" style="width: 350px;">', sprintf(crayon__("Using this markup for Mini Tags and Inline tags is now %sdeprecated%s! Use the %sTag Editor%s instead and convert legacy tags."), '<a href="http://aramk.com/blog/2011/12/27/mini-tags-in-crayon/" target="_blank">', '</a>', '<a href="http://aramk.com/blog/2012/03/25/crayon-tag-editor/" target="_blank">', '</a>'), '</div>';
-        self::checkbox(array(CrayonSettings::CAPTURE_MINI_TAG, crayon__('Capture Mini Tags like [php][/php] as Crayons.') . self::help_button('http://aramk.com/blog/2011/12/27/mini-tags-in-crayon/')));
-        self::checkbox(array(CrayonSettings::INLINE_TAG_CAPTURE, crayon__('Capture Inline Tags like {php}{/php} inside sentences.') . self::help_button('http://aramk.com/blog/2012/03/07/inline-crayons/')));
-        self::checkbox(array(CrayonSettings::PLAIN_TAG, crayon__('Enable [plain][/plain] tag.') . self::help_button('http://aramk.com/blog/2011/12/27/mini-tags-in-crayon/')));
+        echo '<div class="note" style="width: 350px;">', sprintf(crayon__("Using this markup for Mini Tags and Inline tags is now %sdeprecated%s! Use the %sTag Editor%s instead and convert legacy tags."), '<a href="https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Mini-Tags-and-Plain-Tags-in-Crayon" target="_blank">', '</a>', '<a href="http://aramk.com/blog/2012/03/25/crayon-tag-editor/" target="_blank">', '</a>'), '</div>';
+        self::checkbox(array(CrayonSettings::CAPTURE_MINI_TAG, crayon__('Capture Mini Tags like [php][/php] as Crayons.') . self::help_button('https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Mini-Tags-and-Plain-Tags-in-Crayon')));
+        self::checkbox(array(CrayonSettings::INLINE_TAG_CAPTURE, crayon__('Capture Inline Tags like {php}{/php} inside sentences.') . self::help_button('https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Inline-Tags,-%60Backquotes%60-and-Crayons-in-Comments')));
+        self::checkbox(array(CrayonSettings::PLAIN_TAG, crayon__('Enable [plain][/plain] tag.') . self::help_button('https://github.com/urvanov-ru/crayon-syntax-highlighter/wiki/Mini-Tags-and-Plain-Tags-in-Crayon')));
     }
 
     public static function files() {
@@ -1196,8 +1231,8 @@ class Human {
         $developer = '<strong>' . crayon__('Developer') . ':</strong> ' . '<a href="' . $CRAYON_AUTHOR_SITE . '" target="_blank">' . $CRAYON_AUTHOR . '</a>';
         $translators = '<strong>' . crayon__('Translators') . ':</strong> ' .
             '
-            Arabic (<a href="http://djennadhamza.eb2a.com/" target="_blank">Djennad Hamza</a>),
-            Chinese Simplified (<a href="http://smerpup.com/" target="_blank">Dezhi Liu</a>, <a href="http://neverno.me/" target="_blank">Jash Yin</a>),
+            Arabic (Djennad Hamza),
+            Chinese Simplified (<a href="http://smerpup.com/" target="_blank">Dezhi Liu</a>, Jash Yin),
             Chinese Traditional (<a href="http://www.arefly.com/" target="_blank">Arefly</a>),
             Dutch (<a href="https://twitter.com/RobinRoelofsen" target="_blank">Robin Roelofsen</a>, <a href="https://twitter.com/#!/chilionsnoek" target="_blank">Chilion Snoek</a>),
             French (<a href="https://vhf.github.io" target="_blank">Victor Felder</a>),
@@ -1215,7 +1250,7 @@ class Human {
             Slovak (<a href="https://twitter.com/#!/webhostgeeks" target="_blank">webhostgeeks</a>),
             Slovenian (<a href="http://jodlajodla.si/" target="_blank">Jan Su&#353;nik</a>),
             Spanish (<a href="http://www.hbravo.com/" target="_blank">Hermann Bravo</a>),
-            Tamil (<a href="http://kks21199.mrgoogleglass.com/" target="_blank">KKS21199</a>),
+            Tamil (KKS21199),
             Turkish (<a href="http://hakanertr.wordpress.com" target="_blank">Hakan</a>),
             Ukrainian (<a href="http://getvoip.com/blog" target="_blank">Michael Yunat</a>)';
 

@@ -15,15 +15,15 @@ define('CRAYON_DOMAIN', 'crayon-syntax-highlighter');
 
 // These are overridden by functions since v1.1.1
 $CRAYON_VERSION = '1.1.1';
-$CRAYON_DATE = '27th September, 2011';
-$CRAYON_AUTHOR = 'Aram Kocharyan';
-$CRAYON_AUTHOR_SITE = 'http://aramk.com';
-$CRAYON_DONATE = 'http://bit.ly/crayondonate';
-$CRAYON_WEBSITE = 'https://github.com/aramk/crayon-syntax-highlighter';
-$CRAYON_EMAIL = 'crayon.syntax@gmail.com';
+$CRAYON_DATE = '10th August, 2025';
+$CRAYON_AUTHOR = 'Aram Kocharyan, Fedor Urvanov';
+$CRAYON_AUTHOR_SITE = 'http://aramk.com, https://urvanov.ru';
+$CRAYON_DONATE = 'http://bit.ly/crayondonate, https://yoomoney.ru/to/41001288941320';
+$CRAYON_WEBSITE = 'https://github.com/<aramk|urvanov-ru>/crayon-syntax-highlighter';
+$CRAYON_EMAIL = 'crayon.syntax@gmail.com, fedor@urvanov.ru';
 $CRAYON_TWITTER = 'http://twitter.com/crayonsyntax';
-$CRAYON_GIT = 'http://github.com/aramk/crayon-syntax-highlighter';
-$CRAYON_PLUGIN_WP = 'https://wordpress.org/plugins/crayon-syntax-highlighter/';
+$CRAYON_GIT = 'https://github.com/<aramk|urvanov-ru>/crayon-syntax-highlighter';
+$CRAYON_PLUGIN_WP = 'https://wordpress.org/plugins/<crayon|urvanov>-syntax-highlighter/';
 
 // XXX Used to name the class
 
@@ -85,6 +85,7 @@ define('CRAYON_CSS_JQUERY_COLORPICKER', CRAYON_JS_DIR . 'jquery-colorpicker/jque
 define('CRAYON_JS_JQUERY_COLORPICKER', CRAYON_JS_DIR . 'jquery-colorpicker/jquery.colorpicker.js');
 define('CRAYON_JS_TINYCOLOR', CRAYON_JS_DIR . 'tinycolor-min.js');
 define('CRAYON_TAG_EDITOR_JS', 'crayon_tag_editor.js');
+define('CRAYON_EDITOR_CSS', 'util/tag-editor/crayon_editor.css');
 define('CRAYON_COLORBOX_JS', 'colorbox/jquery.colorbox-min.js');
 define('CRAYON_COLORBOX_CSS', 'colorbox/colorbox.css');
 define('CRAYON_TAG_EDITOR_PHP', CRAYON_TAG_EDITOR_PATH . 'crayon_tag_editor_wp.class.php');

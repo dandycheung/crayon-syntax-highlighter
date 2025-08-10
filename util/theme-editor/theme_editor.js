@@ -83,6 +83,7 @@
                 action: 'crayon-theme-editor-save',
                 id: themeID,
                 name: base.getName(),
+                _ajax_nonce: $("#crayon-theme-editor-wrap").data( "save-nonce" ),
                 css: newThemeStr
             }, function (result) {
                 status.show();
@@ -110,7 +111,8 @@
                 yes: function () {
                     CrayonUtil.postAJAX({
                         action: 'crayon-theme-editor-delete',
-                        id: id
+                        id: id,
+                        _ajax_nonce: $("#crayon-theme-editor-wrap").data( "delete-nonce" ),
                     }, function (result) {
                         if (result > 0) {
                             CrayonUtil.reload();
@@ -137,6 +139,7 @@
                     CrayonUtil.postAJAX({
                         action: 'crayon-theme-editor-duplicate',
                         id: id,
+                        _ajax_nonce: $("#crayon-theme-editor-wrap").data( "duplicate-nonce" ),
                         name: val
                     }, function (result) {
                         if (result > 0) {
@@ -161,6 +164,7 @@
                     CrayonUtil.postAJAX({
                         action: 'crayon-theme-editor-submit',
                         id: id,
+                        _ajax_nonce: $("#crayon-theme-editor-wrap").data( "submit-nonce" ),
                         message: val
                     }, function (result) {
                         var msg = result > 0 ? strings.submitSucceed : strings.submitFail + ' ' + strings.checkLog;
